@@ -37,7 +37,13 @@
     }
 
     .card:hover {
-      transform: translateY(-10px);
+      transform: scale(1.05);
+    }
+
+    .card img {
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
     }
 
     button {
@@ -82,7 +88,7 @@
       width: 100%;
     }
 
-    img {
+    img.qr {
       margin-top: 10px;
     }
   </style>
@@ -114,10 +120,23 @@
 <script>
 let cart = [];
 
+// 🐼 PRODUCTS (PANDA STYLE)
 let products = [
-  { name: "Gold Coin 10g", price: 0 },
-  { name: "Silver Coin 50g", price: 0 },
-  { name: "Gold Coin 20g", price: 0 }
+  {
+    name: "🐼 Panda 50g",
+    price: 1,
+    image: "4.png"
+  },
+  {
+    name: "🪙 panda badiya 100g",
+    price: 1,
+    image: "3.png"
+  },
+  {
+    name: "🐼 Panda 100g",
+    price: 1,
+    image: "2.png"
+  }
 ];
 
 // SHOW PRODUCTS
@@ -128,8 +147,9 @@ products.forEach(p => {
   div.className = "card";
 
   div.innerHTML = `
+    <img src="${p.image}">
     <h3>${p.name}</h3>
-    <p>₹${p.price}</p>
+    <p style="color:green;font-weight:bold;">₹${p.price}</p>
     <button>Add to Cart</button>
   `;
 
@@ -195,12 +215,12 @@ function payUPI(){
   // OPEN UPI
   window.location.href = upiLink;
 
-  // QR
+  // QR CODE
   let qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiLink)}`;
 
   document.getElementById("qr").innerHTML = `
     <p>Scan QR to Pay:</p>
-    <img src="${qrURL}">
+    <img class="qr" src="${qrURL}">
   `;
 
   // WHATSAPP ORDER
