@@ -42,6 +42,7 @@
 
     .card img {
       height: 150px;
+      width: 100%;
       object-fit: cover;
       border-radius: 10px;
     }
@@ -120,22 +121,22 @@
 <script>
 let cart = [];
 
-// 🐼 PRODUCTS (PANDA STYLE)
+// ✅ YOUR PRODUCTS (WITH YOUR IMAGES)
 let products = [
   {
-    name: "🐼 Panda 50g",
-    price: 1,
-    image: "4.png"
+    name: "🐼 Panda Silver Coin",
+    price: 4200,
+    image: "images/2.jpg"
   },
   {
-    name: "🪙 panda badiya 100g",
-    price: 1,
-    image: "3.png"
+    name: "🪙 Gold Coin 10g",
+    price: 62000,
+    image: "images/3.jpg"
   },
   {
-    name: "🐼 Panda 100g",
-    price: 1,
-    image: "2.png"
+    name: "🐼 Panda Gold Coin",
+    price: 32000,
+    image: "images/4.jpg"
   }
 ];
 
@@ -212,10 +213,8 @@ function payUPI(){
 
   let upiLink = `upi://pay?pa=${upiID}&pn=GoldStore&am=${total}&cu=INR`;
 
-  // OPEN UPI
   window.location.href = upiLink;
 
-  // QR CODE
   let qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiLink)}`;
 
   document.getElementById("qr").innerHTML = `
@@ -223,7 +222,6 @@ function payUPI(){
     <img class="qr" src="${qrURL}">
   `;
 
-  // WHATSAPP ORDER
   let message = "New Order:%0A";
 
   cart.forEach(item => {
