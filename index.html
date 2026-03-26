@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Gold & Silver Store</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      margin: 0;
+      background: #f4f4f4;
+    }
+
+    header {
+      background: linear-gradient(to right, gold, orange);
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    #products {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      width: 220px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+    }
+
+    button {
+      padding: 10px;
+      border: none;
+      background: black;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: gold;
+      color: black;
+    }
+
+    #cartBox {
+      position: fixed;
+      right: 20px;
+      top: 80px;
+      width: 300px;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+
+    input {
+      width: 90%;
+      padding: 8px;
+      margin: 5px 0;
+    }
+
+    .remove {
+      background: red;
+      margin-left: 10px;
+    }
+
+    .checkout {
+      background: green;
+      width: 100%;
+    }
+
+    img {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>💰 Gold & Silver Coins Store</header>
+
+<div id="products"></div>
+
+<div id="cartBox">
+
+  <h3>🛒 Cart</h3>
+
+  <input id="name" placeholder="Your Name">
+  <input id="phone" placeholder="Phone Number">
+  <input id="address" placeholder="Address">
+
+  <ul id="cart"></ul>
+  <h4 id="total"></h4>
+
+  <button class="checkout" onclick="payUPI()">Pay via UPI</button>
+
+  <div id="qr"></div>
+
+</div>
+
+<script>
+let cart = [];
+
+let products = [
+  { name: "Gold Coin 10g", price: 0 },
+  { name: "Silver Coin 50g", price: 0 },
+  { name: "Gold Coin 20g", price: 0 }
+];
+
+// SHOW PRODUCTS
+const container = document.getElementById("products");
+
+products.forEach(p => {
+  let div = document.createElement("div");
+  div.className = "card";
+
+  div.innerHTML = `
+    <h3>${p.name}</h3>
+    <p>₹${p.price}</p>
+    <button>Add to Cart</button>
+  `;
+
+  div.querySelector("button").onclick = () => {
+    cart.push(p);
+    updateCart();
+  };
+
+  container.appendChild(div);
+});
+
+// UPDATE CART
+function updateCart(){
+  let cartEl = document.getElementById("cart");
+  let totalEl = document.getElementById("total");
+
+  cartEl.innerHTML = "";
+  let total = 0;
+
+  cart.forEach((item, index) => {
+    total += item.price;
+
+    let li = document.createElement("li");
+    li.innerHTML = `
+      ${item.name} - ₹${item.price}
+      <button class="remove" onclick="removeItem(${index})">❌</button>
+    `;
+    cartEl.appendChild(li);
+  });
+
+  totalEl.innerText = "Total: ₹" + total;
+}
+
+// REMOVE ITEM
+function removeItem(index) {
+  cart.splice(index, 1);
+  updateCart();
+}
+
+// 💳 UPI PAYMENT + WHATSAPP
+function payUPI(){
+
+  let name = document.getElementById("name").value;
+  let phone = document.getElementById("phone").value;
+  let address = document.getElementById("address").value;
+
+  if(cart.length === 0){
+    alert("Cart empty ❗");
+    return;
+  }
+
+  if(!name || !phone || !address){
+    alert("Please fill all details ❗");
+    return;
+  }
+
+  let total = cart.reduce((sum, item) => sum + item.price, 0);
+
+  let upiID = "b8135181-2@okicici";
+
+  let upiLink = `upi://pay?pa=${upiID}&pn=GoldStore&am=${total}&cu=INR`;
+
+  // OPEN UPI
+  window.location.href = upiLink;
+
+  // QR
+  let qrURL = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiLink)}`;
+
+  document.getElementById("qr").innerHTML = `
+    <p>Scan QR to Pay:</p>
+    <img src="${qrURL}">
+  `;
+
+  // WHATSAPP ORDER
+  let message = "New Order:%0A";
+
+  cart.forEach(item => {
+    message += item.name + " - ₹" + item.price + "%0A";
+  });
+
+  message += "%0ATotal: ₹" + total;
+  message += "%0AName: " + name;
+  message += "%0APhone: " + phone;
+  message += "%0AAddress: " + address;
+
+  let whatsapp = `https://wa.me/918447782543?text=${message}`;
+
+  setTimeout(() => {
+    window.open(whatsapp, "_blank");
+  }, 2000);
+
+  cart = [];
+  updateCart();
+}
+</script>
+
+</body>
+</html>
